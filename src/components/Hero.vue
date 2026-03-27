@@ -49,21 +49,22 @@ async function sendMessage() {
   scrollToBottom()
 
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    // LLAMADA ACTUALIZADA: Ahora apunta a nuestra Serverless Function
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
         messages: messages.value,
-        temperature: 0.7,
-        max_tokens: 256
       })
     })
 
     const data = await response.json()
+    
+    // Si la función de Vercel devuelve un error (ej. 500), lo capturamos
+    if (!response.ok) throw new Error(data.error || 'Error fetching chat')
+
     const aiResponse = data.choices[0].message.content
     messages.value.push({ role: 'assistant', content: aiResponse })
   } catch (error) {
