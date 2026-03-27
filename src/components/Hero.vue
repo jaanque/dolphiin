@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import LogoDolphin from './LogoDolphin.vue'
+
 const copied = ref(false)
 async function copy() {
   await navigator.clipboard.writeText('npm install dolphiin')
@@ -13,7 +15,10 @@ async function copy() {
 
     <header>
       <nav aria-label="Main navigation">
-        <a href="/" class="logo" aria-label="Dolphiin home">◈ dolphiin</a>
+        <a href="/" class="logo" aria-label="Dolphiin home">
+          <LogoDolphin :size="28" />
+          <span>dolphiin</span>
+        </a>
         <div class="nav-links" role="list">
           <a href="#how" role="listitem">How it works</a>
           <a href="#pricing" role="listitem">Pricing</a>
@@ -52,21 +57,6 @@ async function copy() {
       </div>
     </main>
 
-    <section id="how" class="pillars" aria-label="Key features">
-      <article class="pillar">
-        <strong>Your real key, hidden forever</strong>
-        <p>Set it once in your dashboard. It never appears in your code or browser again.</p>
-      </article>
-      <article class="pillar">
-        <strong>Fake keys that self-destruct</strong>
-        <p>Every user gets a temporary key. Even if stolen, it's already expired.</p>
-      </article>
-      <article class="pillar">
-        <strong>Any API. Zero setup.</strong>
-        <p>OpenAI, Stripe, Anthropic and more — plus automatic bot blocking, free.</p>
-      </article>
-    </section>
-
   </div>
 </template>
 
@@ -90,6 +80,9 @@ nav {
   border-bottom: 1px solid #f2f2f2;
 }
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   font-size: 16px;
   letter-spacing: -0.3px;
@@ -227,38 +220,10 @@ h1 em { font-style: italic; }
 }
 .btn-link:hover { text-decoration: underline; }
 
-/* ── Pillars ── */
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid #f2f2f2;
-}
-.pillar {
-  padding: 36px 40px;
-  border-right: 1px solid #f2f2f2;
-}
-.pillar:last-child { border-right: none; }
-.pillar strong {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 8px;
-}
-.pillar p {
-  font-size: 13.5px;
-  color: #777;
-  line-height: 1.65;
-  margin: 0;
-}
-
 /* ── Responsive ── */
 @media (max-width: 640px) {
   nav { padding: 16px 20px; }
   .nav-links a:not(.btn-nav) { display: none; }
   main { padding: 64px 20px 56px; }
-  .pillars { grid-template-columns: 1fr; }
-  .pillar { border-right: none; border-bottom: 1px solid #f2f2f2; padding: 28px 20px; }
-  .pillar:last-child { border-bottom: none; }
 }
 </style>

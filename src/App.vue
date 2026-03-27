@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import Hero from './components/Hero.vue'
+import HowItWorks from './components/HowItWorks.vue'
 </script>
 
 <template>
   <Hero />
+  <HowItWorks />
 </template>
 
 <style>
