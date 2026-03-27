@@ -1,44 +1,156 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import LogoDolphin from './LogoDolphin.vue'
 
 const copied = ref(false)
+const email = ref('')
+const isMenuOpen = ref(false)
+
+// ── Chat State ──
+const isChatOpen = ref(false)
+const chatInput = ref('')
+const messages = ref<{ role: 'user' | 'assistant' | 'system'; content: string }[]>([])
+const isTyping = ref(false)
+const chatContainer = ref<HTMLElement | null>(null)
+
+function toggleMenu() {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
 async function copy() {
   await navigator.clipboard.writeText('npm install dolphiin')
   copied.value = true
   setTimeout(() => (copied.value = false), 2000)
 }
+
+const SYSTEM_PROMPT = `You are the Dolphiin AI Assistant. You have expert knowledge about the Dolphiin platform.
+
+Core Knowledge:
+- Problem: Developers traditionally put API keys in .env files or code, which leads to security leaks. This is "The Vulnerable Way".
+- Solution: Dolphiin replaces real keys with "DOLPHIIN_SECURE" tokens. Real keys are only injected at the edge nodes (Cloudflare, Vercel, AWS), ensuring they never reach the frontend or your server. This is "From vulnerable to invisible".
+- Integration: Just "npm install dolphiin". You connect your master keys once in our dashboard, and we generate user-specific, expiring tokens.
+- Performance: Ultra-low latency (<1ms overhead) because we live at the edge.
+- Timeline: We are developing until August 2026. Launch is April 2026.
+- Offer: The first 1,000 "Early Adopters" get Pro features free for life.
+
+Guidelines:
+- If a user asks a question about Dolphiin, answer accurately based on the info above.
+- If a user asks about pricing, mention the free Pro for life for the first 1000 users.
+- Keep responses professional, technical, and concise.
+- If asked about something not mentioned above, state that it's in the roadmap for 2026.`
+
+async function sendMessage() {
+  if (!chatInput.value.trim() || isTyping.value) return
+  
+  const userMessage = chatInput.value.trim()
+  chatInput.value = ''
+  
+  if (messages.value.length === 0) {
+    messages.value.push({ role: 'system', content: SYSTEM_PROMPT })
+  }
+  
+  messages.value.push({ role: 'user', content: userMessage })
+  isTyping.value = true
+  
+  scrollToBottom()
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: messages.value,
+        temperature: 0.7,
+        max_tokens: 256
+      })
+    })
+
+    const data = await response.json()
+    const aiResponse = data.choices[0].message.content
+    messages.value.push({ role: 'assistant', content: aiResponse })
+  } catch (error) {
+    console.error('Chat Error:', error)
+    messages.value.push({ role: 'assistant', content: "Sorry, I'm having trouble connecting right now. Please try again later." })
+  } finally {
+    isTyping.value = false
+    scrollToBottom()
+  }
+}
+
+async function scrollToBottom() {
+  await nextTick()
+  if (chatContainer.value) {
+    chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+  }
+}
+
+function formatMessage(content: string) {
+  if (!content) return ''
+  return content
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>')
+}
+
+function toggleChat() {
+  isChatOpen.value = !isChatOpen.value
+  if (isChatOpen.value && messages.value.length === 0) {
+    messages.value.push({ role: 'assistant', content: "Hi! I'm Dolphiin AI. Ask me anything about how we protect your API keys." })
+  }
+}
 </script>
 
 <template>
   <div class="page">
-
     <header>
       <nav aria-label="Main navigation">
         <a href="/" class="logo" aria-label="Dolphiin home">
           <LogoDolphin :size="28" />
           <span>dolphiin</span>
         </a>
-        <div class="nav-links" role="list">
-          <a href="#how" role="listitem">How it works</a>
-          <a href="#pricing" role="listitem">Pricing</a>
-          <a href="#docs" role="listitem">Docs</a>
-          <a href="#start" class="btn-nav" role="listitem">Get started</a>
+        <div class="nav-links" :class="{ 'is-open': isMenuOpen }" role="list">
+          <button class="menu-close" @click="toggleMenu" aria-label="Close menu">&times;</button>
+          <a href="#how-it-works" @click="isMenuOpen = false" role="listitem">How it works</a>
+          <a href="#problem-solution" @click="isMenuOpen = false" role="listitem">The Evolution</a>
+          <a href="#benefit" @click="isMenuOpen = false" role="listitem">Benefits</a>
+          <a href="#waitlist" @click="isMenuOpen = false" class="btn-nav" role="listitem"
+            >Join Waitlist</a
+          >
         </div>
+        <button class="menu-toggle" @click="toggleMenu" aria-label="Open menu">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 6h16M4 12h16M4 18h16"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
       </nav>
     </header>
 
     <main id="start">
-      <p class="eyebrow">For vibe coders & AI developers</p>
+      <p class="eyebrow">DEVELOPING TILL AUGUST 2026</p>
 
       <h1>
-        Your API key is in your code.
+        Your API key is in your code?<br />
         <em>That's a problem.</em>
       </h1>
 
       <p class="sub">
-        Dolphiin replaces it with a fake key per user that expires automatically.
-        One install, done.
+        Dolphiin replaces your API key with a fake one per user that expires automatically. One
+        install, done.
       </p>
 
       <div class="install" role="group" aria-label="Terminal install command">
@@ -52,11 +164,42 @@ async function copy() {
       </div>
 
       <div class="actions">
-        <a href="#start" class="btn-primary">Get started — it's free</a>
-        <a href="#how" class="btn-link">How it works →</a>
+        <a href="#waitlist" class="btn-primary">Get started — it's free</a>
+        <a href="#how-it-works" class="btn-link">How it works →</a>
       </div>
     </main>
 
+    <div class="hero-chat" v-show="!isMenuOpen" :class="{ 'is-expanded': isChatOpen }">
+      <div class="chat-header" @click="toggleChat">
+        <div class="chat-label">Ask Dolphiin AI</div>
+        <button class="chat-toggle-btn">{{ isChatOpen ? '−' : '+' }}</button>
+      </div>
+      
+      <div v-if="isChatOpen" class="chat-window" ref="chatContainer">
+        <div v-for="(msg, idx) in messages.filter(m => m.role !== 'system')" :key="idx" 
+             class="message" :class="msg.role">
+          <div class="bubble" v-html="formatMessage(msg.content)"></div>
+        </div>
+        <div v-if="isTyping" class="message assistant typing">
+          <div class="bubble">...</div>
+        </div>
+      </div>
+
+      <div class="chat-input-wrap">
+        <input 
+          type="text" 
+          placeholder="Ask something..." 
+          v-model="chatInput"
+          @focus="!isChatOpen && toggleChat()"
+          @keyup.enter="sendMessage"
+        />
+        <button class="chat-send" @click="sendMessage" :disabled="isTyping" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -72,12 +215,24 @@ async function copy() {
 }
 
 /* ── Nav ── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border-bottom: 1px solid rgba(242, 242, 242, 0.5);
+  transition: background 0.3s ease;
+}
+
 nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 48px;
-  border-bottom: 1px solid #f2f2f2;
+  padding: 16px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 .logo {
   display: flex;
@@ -100,22 +255,33 @@ nav {
   gap: 32px;
   font-size: 14px;
 }
-.nav-links a { color: #555; text-decoration: none; transition: color 0.15s; }
-.nav-links a:hover { color: #1a1a1a; }
+.nav-links a {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-links a:hover {
+  color: #1a1a1a;
+}
 .nav-links a:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 3px;
   border-radius: 4px;
 }
 .btn-nav {
-  background: #1a1a1a;
+  background: #1a73e8;
   color: #fff !important;
   padding: 8px 18px;
   border-radius: 6px;
   font-weight: 500;
   transition: background 0.15s;
 }
-.btn-nav:hover { background: #333 !important; }
+.btn-nav:focus-visible {
+  border-radius: 6px;
+}
+.btn-nav:hover {
+  background: #1558c0 !important;
+}
 
 /* ── Main ── */
 main {
@@ -151,7 +317,10 @@ h1 {
   margin: 0 0 28px;
   color: #1a1a1a;
 }
-h1 em { font-style: italic; }
+h1 em {
+  font-style: italic;
+  color: #1a73e8; /* Subtle brand color shift */
+}
 
 /* ── Sub ── */
 .sub {
@@ -193,7 +362,9 @@ h1 em { font-style: italic; }
   transition: background 0.15s;
   white-space: nowrap;
 }
-.install button:hover { background: #f5f5f5; }
+.install button:hover {
+  background: #f5f5f5;
+}
 
 /* ── Actions ── */
 .actions {
@@ -211,19 +382,252 @@ h1 em { font-style: italic; }
   text-decoration: none;
   transition: background 0.15s;
 }
-.btn-primary:hover { background: #1558c0; }
+.btn-primary:hover {
+  background: #1558c0;
+}
 .btn-link {
   font-size: 15px;
   color: #1a73e8;
   text-decoration: none;
   font-weight: 500;
 }
-.btn-link:hover { text-decoration: underline; }
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Hero Chat Visual (Floating Popup) ── */
+.hero-chat {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 320px;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-chat.is-expanded {
+  width: 380px;
+  max-height: 500px;
+}
+
+.chat-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.is-expanded .chat-header {
+  border-color: #f2f2f2;
+}
+
+.chat-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #1a73e8;
+}
+
+.chat-toggle-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  display: flex;
+  max-width: 85%;
+}
+
+.message.user {
+  align-self: flex-end;
+}
+
+.message.assistant {
+  align-self: flex-start;
+}
+
+.bubble {
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-radius: 8px;
+}
+
+.user .bubble {
+  background: #1a73e8;
+  color: #fff;
+}
+
+.assistant .bubble {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.typing .bubble {
+  color: #999;
+  letter-spacing: 2px;
+}
+
+.chat-input-wrap {
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #f2f2f2;
+}
+
+.chat-input-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+.chat-send {
+  background: #f5f5f5;
+  border: none;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.chat-send:active { transform: scale(0.95); }
+.chat-send:hover:not(:disabled) {
+  background: #1a73e8;
+  color: #fff;
+}
+
+/* ── Mobile Menu Toggle ── */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #1a1a1a;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.menu-close {
+  display: none;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #1a1a1a;
+  cursor: pointer;
+}
 
 /* ── Responsive ── */
-@media (max-width: 640px) {
-  nav { padding: 16px 20px; }
-  .nav-links a:not(.btn-nav) { display: none; }
-  main { padding: 64px 20px 56px; }
+@media (max-width: 860px) {
+  nav {
+    padding: 16px 24px;
+  }
+  .menu-toggle {
+    display: block;
+  }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    background: #fff;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 40px;
+    gap: 32px;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+    transition: right 0.3s ease;
+    z-index: 1001;
+  }
+  .nav-links.is-open {
+    right: 0;
+  }
+  .menu-close {
+    display: block;
+  }
+  .nav-links a {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .btn-nav {
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+  }
+  .btn-nav:hover {
+    background: #1558c0 !important;
+  }
+  main {
+    padding: 64px 20px 56px;
+  }
+  h1 {
+    font-size: clamp(40px, 10vw, 60px);
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+  }
+  .btn-primary {
+    width: 100%;
+    text-align: center;
+  }
+  .hero-chat {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    background: #fff;
+    padding: 0;
+    border-top: 1px solid #e4e4e4;
+    border-radius: 0;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  }
+  .hero-chat.is-expanded {
+    max-height: 80vh;
+  }
+  .chat-header {
+    padding: 10px 24px;
+  }
+  .chat-input-wrap {
+    padding: 12px 24px;
+  }
+  .chat-input-wrap input {
+    font-size: 14px;
+  }
+  .page {
+    padding-bottom: 60px;
+  }
 }
 </style>

@@ -2,31 +2,36 @@
   <svg
     xmlns="http://www.w3.org/2000/svg"
     :width="size"
-    :height="size * 0.55"
-    viewBox="0 0 52 28"
-    fill="#1a73e8"
+    :height="size"
+    viewBox="0 0 24 24"
+    fill="none"
     aria-hidden="true"
     role="img"
   >
-    <!-- Body + tail -->
-    <path d="
-      M 3,14
-      C 5,9 12,6 20,8
-      L 22,2
-      L 27,9
-      C 34,9 41,11 44,14
-      L 50,8
-      L 47,15
-      L 50,20
-      L 44,15
-      C 40,17 32,19 22,18
-      C 14,18 6,17 3,14
-      Z
-    "/>
-    <!-- Pectoral flipper -->
-    <path d="M 14,15 C 13,21 10,23 8,22 C 11,18 13,16 14,15 Z"/>
-    <!-- Eye -->
-    <circle cx="8" cy="13" r="1.1" fill="#fff"/>
+    <path
+      d="M2 13.5C2 13.5 5 7 13 7C21 7 22.5 12 22.5 12C22.5 12 21 17 13 17C5 17 2 13.5 2 13.5Z"
+      fill="none"
+      stroke="#1a73e8"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M13 7C13 7 11 1 9 4"
+      fill="none"
+      stroke="#1a73e8"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M22.5 12L24 10.5M22.5 12L24 13.5"
+      fill="none"
+      stroke="#1a73e8"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
   </svg>
 </template>
 

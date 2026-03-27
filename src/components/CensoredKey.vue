@@ -1,5 +1,10 @@
 <template>
-  <div class="censored-container" ref="container">
+  <div 
+    class="censored-container" 
+    ref="container" 
+    role="img" 
+    aria-label="Encrypted and censored API key suffix represented by moving particles"
+  >
     <canvas ref="canvas"></canvas>
   </div>
 </template>

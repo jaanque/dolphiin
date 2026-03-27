@@ -1,83 +1,69 @@
+<template>
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <p class="eyebrow" tabindex="0">Integration</p>
+      <h2 tabindex="0">Three steps to <em>total privacy.</em></h2>
+
+      <div class="steps-container">
+        <!-- Step 1 -->
+        <div class="step" tabindex="0">
+          <div class="step-num" tabindex="0">01</div>
+          <div class="step-body">
+            <h3 tabindex="0">Install the Library</h3>
+            <p tabindex="0">One command connects your environment to the Dolphiin edge network.</p>
+            <div class="technical-block terminal" tabindex="0">
+              <span class="t-prompt">$</span> npm install dolphiin
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step" tabindex="0" aria-label="Step 2: Connect your Keys. We generate secure, expiring tokens so your real keys are never exposed.">
+          <div class="step-num" tabindex="0">02</div>
+          <div class="step-body">
+            <h3 tabindex="0">Connect your Keys</h3>
+            <p tabindex="0">Link your master keys once. We generate user-specific, expiring tokens.</p>
+            <div class="technical-block key-row" tabindex="0" aria-label="API Key Preview showing a protected Open AI Key prefix sk-proj followed by censored content.">
+              <span class="provider-name">OPENAI_KEY</span>
+              <span class="key-preview">
+                <span class="key-prefix">sk-proj-</span>
+                <CensoredKey />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step" tabindex="0">
+          <div class="step-num" tabindex="0">03</div>
+          <div class="step-body">
+            <h3 tabindex="0">Deploy & Forget</h3>
+            <p tabindex="0">Your code only ever sees the Dolphiin token. Real keys are injected at the edge.</p>
+            <div class="technical-block badge-row" tabindex="0">
+              <span class="badge blue">Cloudflare Workers</span>
+              <span class="badge blue">Vercel Edge</span>
+              <span class="badge blue">AWS Lambda</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
 <script setup lang="ts">
 import CensoredKey from './CensoredKey.vue'
 </script>
 
-<template>
-  <section class="hiw" id="how" aria-labelledby="hiw-title">
-    <div class="hiw-header">
-      <p class="eyebrow">How it works</p>
-      <h2 id="hiw-title">Three steps.<br /><em>Done.</em></h2>
-    </div>
-
-    <ol class="steps" aria-label="Setup steps">
-      <li class="step">
-        <span class="step-n" aria-hidden="true">01</span>
-        <div class="step-body">
-          <h3>Install the package</h3>
-          <p>One command. Your project is linked to Dolphiin.</p>
-          <div class="terminal" role="img" aria-label="npm install dolphiin">
-            <span class="t-prompt" aria-hidden="true">$</span>
-            <code>npm install dolphiin</code>
-          </div>
-        </div>
-      </li>
-
-      <li class="step">
-        <span class="step-n" aria-hidden="true">02</span>
-        <div class="step-body">
-          <h3>Add your real API key — once</h3>
-          <p>
-            Paste it in your Dolphiin dashboard. We encrypt it. It never touches your code or your
-            <code class="ic">.env</code> file.
-          </p>
-          <div class="key-row" aria-hidden="true">
-            <div class="key-provider">
-              <span class="provider-dot"></span>
-              <span class="provider-name">Key</span>
-            </div>
-            <div class="key-field">
-              <div class="key-value-wrap">
-                <span class="lock-icon" aria-hidden="true">🔒</span>
-                <span class="key-prefix">sk-proj-</span>
-                <CensoredKey />
-              </div>
-              <span class="key-badge">Active ✓</span>
-            </div>
-          </div>
-        </div>
-      </li>
-
-      <li class="step">
-        <span class="step-n" aria-hidden="true">03</span>
-        <div class="step-body">
-          <h3>Ship your app</h3>
-          <p>
-            Nothing else changes in your code. Every visitor automatically gets a temporary key that
-            expires the moment they leave.
-          </p>
-          <div class="chips" aria-label="Included automatically">
-            <span class="chip">Auto-expiring keys</span>
-            <span class="chip">Bot blocking</span>
-            <span class="chip">Rate limiting</span>
-          </div>
-        </div>
-      </li>
-    </ol>
-  </section>
-</template>
-
 <style scoped>
-/* ── Section shell ── */
-.hiw {
-  padding: 112px 48px 120px;
-  max-width: 1320px; /* Even wider for zero wrapping */
-  margin: 0 auto;
-  border-top: 1px solid #f2f2f2;
+.how-it-works {
+  padding: 120px 48px;
+  background: #fff;
 }
 
-/* ── Header ── */
-.hiw-header {
-  margin-bottom: 72px;
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .eyebrow {
@@ -86,221 +72,163 @@ import CensoredKey from './CensoredKey.vue'
   color: #1a73e8;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  margin: 0 0 18px;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 h2 {
   font-family: 'Lora', Georgia, serif;
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(32px, 5vw, 48px);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -1.5px;
-  margin: 0;
+  margin-bottom: 80px;
   color: #1a1a1a;
+  text-align: center;
 }
+
 h2 em {
   font-style: italic;
+  color: #1a73e8;
 }
 
-/* ── Steps list ── */
-.steps {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 80px; /* More gap */
+.steps-container {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
 }
 
-/* ── Single step ── */
 .step {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 16px;
   position: relative;
+  background: #fff;
+  padding: 32px;
+  border: 1px solid #f2f2f2;
+  border-radius: 12px;
+  transition: border-color 0.2s ease;
 }
 
-/* ── Step number — the design element ── */
-.step-n {
-  font-family: 'Lora', Georgia, serif;
-  font-size: 80px;
-  font-weight: 700;
-  color: #f0f0f0;
+.step:hover {
+  border-color: #1a73e8;
+}
+
+.step-num {
+  font-size: 48px;
+  font-weight: 800;
+  color: #f5f5f5;
   line-height: 1;
-  letter-spacing: -3px;
+  font-family: 'Inter', sans-serif;
   user-select: none;
-  margin-bottom: -10px;
-  margin-left: -4px;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 0;
 }
 
-/* ── Step body ── */
 .step-body {
-  padding-top: 0;
-  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 h3 {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
   color: #1a1a1a;
-  letter-spacing: -0.4px;
-  margin: 0 0 12px;
-  min-height: 2.6em; /* Align start of paragraphs */
-  display: flex;
-  align-items: flex-end; /* Push title to bottom of its zone for consistency */
+  letter-spacing: -0.5px;
 }
 
-.step-body > p {
-  font-size: 15px;
-  line-height: 1.65;
-  color: #666;
-  margin: 0 0 28px;
-  min-height: 4.8em; /* Align start of widgets */
+.step-body p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #4b4b4b; /* Darkened from #666 as requested before */
+  margin-bottom: 24px;
+  max-width: 600px;
 }
 
-/* ── Terminal ── */
-.terminal {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fafafa;
-  border: 1px solid #ebebeb;
-  border-radius: 8px;
-  padding: 14px 18px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.t-prompt {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 13px;
-  color: #ccc;
-}
-
-.terminal code {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-/* ── Inline code ── */
-.ic {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 13px;
-  background: #f5f5f5;
-  border: 1px solid #ebebeb;
-  padding: 1px 6px;
-  border-radius: 4px;
-  color: #444;
-}
-
-/* ── Dashboard key row ── */
-.key-row {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.technical-block {
   background: #fafafa;
   border: 1px solid #ebebeb;
   border-radius: 8px;
   padding: 16px 20px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.key-provider {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-.provider-dot {
-  width: 6px;
-  height: 6px;
-  background: #1a73e8;
-  border-radius: 50%;
+.terminal {
+  color: #1a1a1a;
+}
+
+.t-prompt {
+  color: #888; /* Darkened from #ccc */
+  margin-right: 12px;
+  user-select: none;
+}
+
+.key-row {
+  gap: 16px;
 }
 
 .provider-name {
-  font-size: 11px;
+  color: #666; /* Darkened from #999 */
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: #999;
-}
-
-.key-field {
-  display: flex;
-  flex-direction: row; /* Horizontal as per request */
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.lock-icon {
   font-size: 12px;
-  margin-right: 4px;
+  text-transform: uppercase;
 }
 
-.key-value-wrap {
+.key-preview {
   display: flex;
   align-items: center;
-  gap: 2px;
+  color: #1a1a1a;
 }
 
 .key-prefix {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 13px;
-  color: #888;
-  letter-spacing: 0.5px;
+  color: #555; /* Darkened from #888 */
 }
 
-.key-badge {
+.badge-row {
+  gap: 12px;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.badge {
   font-size: 11px;
   font-weight: 600;
-  color: #166534;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  padding: 3px 10px;
-  border-radius: 999px;
-}
-
-/* ── Chips ── */
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
-  background: #f5f5f5;
-  border: 1px solid #e8e8e8;
   padding: 6px 12px;
-  border-radius: 999px;
+  background: #f5f5f5;
+  border: 1px solid #ebebeb;
+  border-radius: 20px;
+  color: #666;
 }
 
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .steps {
-    grid-template-columns: 1fr;
-    gap: 80px;
-  }
+.badge.blue {
+  background: rgba(26, 115, 232, 0.05);
+  border-color: rgba(26, 115, 232, 0.1);
+  color: #1a73e8;
 }
 
-@media (max-width: 640px) {
-  .hiw {
-    padding: 64px 20px 56px;
+@media (max-width: 960px) {
+  .steps-container {
+    flex-direction: column;
+    gap: 48px;
   }
-
-  .step-n {
-    font-size: 64px;
+  .step {
+    padding: 24px;
   }
-
-  h3 {
-    font-size: 19px;
+  .step-num {
+    font-size: 40px;
+    top: 16px;
+    right: 20px;
   }
 }
 </style>
