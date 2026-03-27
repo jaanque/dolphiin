@@ -69,7 +69,7 @@ import CensoredKey from './CensoredKey.vue'
 .eyebrow {
   font-size: 13px;
   font-weight: 500;
-  color: #1a73e8;
+  color: #b55916;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 24px;
@@ -89,7 +89,7 @@ h2 {
 
 h2 em {
   font-style: italic;
-  color: #1a73e8;
+  color: #b55916;
 }
 
 .steps-container {
@@ -112,7 +112,7 @@ h2 em {
 }
 
 .step:hover {
-  border-color: #1a73e8;
+  border-color: #b55916;
 }
 
 .step-num {
@@ -212,9 +212,9 @@ h3 {
 }
 
 .badge.blue {
-  background: rgba(26, 115, 232, 0.05);
-  border-color: rgba(26, 115, 232, 0.1);
-  color: #1a73e8;
+  background: rgba(181, 89, 22, 0.05);
+  border-color: rgba(181, 89, 22, 0.1);
+  color: #b55916;
 }
 
 @media (max-width: 960px) {

@@ -47,7 +47,7 @@ section {
 }
 
 :focus-visible {
-  outline: 2.5px solid #1a73e8;
+  outline: 2.5px solid #b55916;
   outline-offset: 3px;
   border-radius: 4px;
 }

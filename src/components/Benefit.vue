@@ -46,7 +46,7 @@
 .eyebrow {
   font-size: 13px;
   font-weight: 500;
-  color: #1a73e8;
+  color: #b55916;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0 0 18px;
@@ -65,7 +65,7 @@ h2 {
 
 h2 em {
   font-style: italic;
-  color: #1a73e8;
+  color: #b55916;
 }
 
 .benefit-grid {
@@ -83,7 +83,7 @@ h2 em {
 .dot {
   width: 8px;
   height: 8px;
-  background: #1a73e8;
+  background: #b55916;
   border-radius: 50%;
   margin-top: 10px;
   flex-shrink: 0;

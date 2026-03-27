@@ -51,7 +51,7 @@
 .eyebrow {
   font-size: 13px;
   font-weight: 500;
-  color: #1a73e8;
+  color: #b55916;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0 0 18px;
@@ -71,7 +71,7 @@ h2 {
 
 h2 em {
   font-style: italic;
-  color: #1a73e8;
+  color: #b55916;
 }
 
 .comparison {
@@ -109,7 +109,7 @@ h2 em {
 }
 
 .red { background: #d93025; }
-.blue { background: #1a73e8; }
+.blue { background: #b55916; }
 
 .code-box {
   font-family: 'Roboto Mono', monospace;
@@ -134,8 +134,8 @@ code {
 
 .success-msg {
   font-size: 12px;
-  color: #1a73e8;
-  background: rgba(26, 115, 232, 0.05);
+  color: #b55916;
+  background: rgba(181, 89, 22, 0.05);
   padding: 6px 12px;
   border-radius: 4px;
   display: inline-block;

@@ -2,7 +2,7 @@
   <section class="waitlist" id="waitlist">
     <div class="container">
       <h2 tabindex="0">Be an <em>Early Adopter</em>.</h2>
-      <p class="sub" tabindex="0">Join the elite waitlist. Launching April 2026.</p>
+      <p class="sub" tabindex="0">Join the elite waitlist. Launching August 2026.</p>
       <p>The first 1,000 members get Pro features free for life. No credit card required.</p>
 
       <div v-if="status === 'success'" class="success-box" tabindex="0">
@@ -85,7 +85,7 @@ h2 {
 
 h2 em {
   font-style: italic;
-  color: #1a73e8;
+  color: #b55916;
 }
 
 p {
@@ -113,8 +113,8 @@ p {
 }
 
 .input-wrap:focus-within {
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+  border-color: #b55916;
+  box-shadow: 0 0 0 4px rgba(181, 89, 22, 0.1);
 }
 
 input {
@@ -128,7 +128,7 @@ input {
 }
 
 .btn-primary {
-  background: #1a73e8;
+  background: #b55916;
   color: #fff;
   border: none;
   padding: 12px 24px;

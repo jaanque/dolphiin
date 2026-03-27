@@ -1,15 +1,29 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
 import LogoDolphin from './LogoDolphin.vue'
+import { WEBSITE_CONTEXT } from '../lib/context'
 
 const copied = ref(false)
 const email = ref('')
 const isMenuOpen = ref(false)
 
+const SYSTEM_PROMPT = `You are the Dolphiin AI Assistant. You have expert knowledge about the Dolphiin platform.
+
+Use the following information about the website and platform to answer any user questions:
+${WEBSITE_CONTEXT}
+
+Guidelines:
+- Answer accurately based on the provided context.
+- Keep responses professional, technical, and concise.
+- Respond in the same language the user uses.
+- If the information is not in the context, state that it's in the 2026 roadmap or suggest contacting support at hello@dolphiin.com.`
+
 // ── Chat State ──
 const isChatOpen = ref(false)
 const chatInput = ref('')
-const messages = ref<{ role: 'user' | 'assistant' | 'system'; content: string }[]>([])
+const messages = ref<{ role: 'user' | 'assistant' | 'system'; content: string }[]>([
+  { role: 'system', content: SYSTEM_PROMPT }
+])
 const isTyping = ref(false)
 const chatContainer = ref<HTMLElement | null>(null)
 
@@ -23,31 +37,11 @@ async function copy() {
   setTimeout(() => (copied.value = false), 2000)
 }
 
-const SYSTEM_PROMPT = `You are the Dolphiin AI Assistant. You have expert knowledge about the Dolphiin platform.
-
-Core Knowledge:
-- Problem: Developers traditionally put API keys in .env files or code, which leads to security leaks. This is "The Vulnerable Way".
-- Solution: Dolphiin replaces real keys with "DOLPHIIN_SECURE" tokens. Real keys are only injected at the edge nodes (Cloudflare, Vercel, AWS), ensuring they never reach the frontend or your server. This is "From vulnerable to invisible".
-- Integration: Just "npm install dolphiin". You connect your master keys once in our dashboard, and we generate user-specific, expiring tokens.
-- Performance: Ultra-low latency (<1ms overhead) because we live at the edge.
-- Timeline: We are developing until August 2026. Launch is April 2026.
-- Offer: The first 1,000 "Early Adopters" get Pro features free for life.
-
-Guidelines:
-- If a user asks a question about Dolphiin, answer accurately based on the info above.
-- If a user asks about pricing, mention the free Pro for life for the first 1000 users.
-- Keep responses professional, technical, and concise.
-- If asked about something not mentioned above, state that it's in the roadmap for 2026.`
-
 async function sendMessage() {
   if (!chatInput.value.trim() || isTyping.value) return
   
   const userMessage = chatInput.value.trim()
   chatInput.value = ''
-  
-  if (messages.value.length === 0) {
-    messages.value.push({ role: 'system', content: SYSTEM_PROMPT })
-  }
   
   messages.value.push({ role: 'user', content: userMessage })
   isTyping.value = true
@@ -98,8 +92,8 @@ function formatMessage(content: string) {
 
 function toggleChat() {
   isChatOpen.value = !isChatOpen.value
-  if (isChatOpen.value && messages.value.length === 0) {
-    messages.value.push({ role: 'assistant', content: "Hi! I'm Dolphiin AI. Ask me anything about how we protect your API keys." })
+  if (isChatOpen.value && !messages.value.some(m => m.role === 'assistant')) {
+    messages.value.push({ role: 'assistant', content: "Hi! I'm Dolphiin AI. Ask me anything about how we protect your API keys or how to integrate us into your workflow." })
   }
 }
 </script>
@@ -109,8 +103,8 @@ function toggleChat() {
     <header>
       <nav aria-label="Main navigation">
         <a href="/" class="logo" aria-label="Dolphiin home">
-          <LogoDolphin :size="28" />
-          <span>dolphiin</span>
+          <LogoDolphin :size="52" />
+          <span class="logo-text">dolphiin</span>
         </a>
         <div class="nav-links" :class="{ 'is-open': isMenuOpen }" role="list">
           <button class="menu-close" @click="toggleMenu" aria-label="Close menu">&times;</button>
@@ -239,16 +233,30 @@ nav {
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  font-size: 16px;
-  letter-spacing: -0.3px;
+  font-size: 20px;
+  letter-spacing: -0.5px;
   color: #1a1a1a;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: color 0.2s ease;
 }
+
+.logo:hover {
+  color: #b55916;
+}
+
+.logo-text {
+  /* Naturally centered by flexbox now */
+}
+
 .logo:focus-visible {
-  outline: 2px solid #1a73e8;
+  outline: 2px solid #b55916;
   outline-offset: 3px;
   border-radius: 4px;
 }
+
 .nav-links {
   display: flex;
   align-items: center;
@@ -260,16 +268,19 @@ nav {
   text-decoration: none;
   transition: color 0.15s;
 }
+.nav-li.btn-nav:hover {
+  color: #b55916;
+}
 .nav-links a:hover {
   color: #1a1a1a;
 }
 .nav-links a:focus-visible {
-  outline: 2px solid #1a73e8;
+  outline: 2px solid #b55916;
   outline-offset: 3px;
   border-radius: 4px;
 }
 .btn-nav {
-  background: #1a73e8;
+  background: #b55916;
   color: #fff !important;
   padding: 8px 18px;
   border-radius: 6px;
@@ -280,7 +291,7 @@ nav {
   border-radius: 6px;
 }
 .btn-nav:hover {
-  background: #1558c0 !important;
+  background: #a04e13 !important;
 }
 
 /* ── Main ── */
@@ -301,7 +312,7 @@ main {
 .eyebrow {
   font-size: 13px;
   font-weight: 500;
-  color: #1a73e8;
+  color: #b55916;
   letter-spacing: 0.4px;
   text-transform: uppercase;
   margin: 0 0 24px;
@@ -319,8 +330,14 @@ h1 {
 }
 h1 em {
   font-style: italic;
-  color: #1a73e8; /* Subtle brand color shift */
+  color: #b55916; /* Subtle brand color shift */
 }
+.hero-h1 em {
+  font-style: italic;
+  color: #b55916;
+}
+ /* Subtle brand color shift */
+
 
 /* ── Sub ── */
 .sub {
@@ -355,7 +372,7 @@ h1 em {
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   background: #fff;
-  color: #1a73e8;
+  color: #b55916;
   border: none;
   border-left: 1px solid #e4e4e4;
   cursor: pointer;
@@ -373,7 +390,7 @@ h1 em {
   gap: 24px;
 }
 .btn-primary {
-  background: #1a73e8;
+  background: #b55916;
   color: #fff;
   font-size: 15px;
   font-weight: 500;
@@ -383,11 +400,11 @@ h1 em {
   transition: background 0.15s;
 }
 .btn-primary:hover {
-  background: #1558c0;
+  background: #a04e13;
 }
 .btn-link {
   font-size: 15px;
-  color: #1a73e8;
+  color: #b55916;
   text-decoration: none;
   font-weight: 500;
 }
@@ -435,7 +452,7 @@ h1 em {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #1a73e8;
+  color: #b55916;
 }
 
 .chat-toggle-btn {
@@ -477,7 +494,7 @@ h1 em {
 }
 
 .user .bubble {
-  background: #1a73e8;
+  background: #b55916;
   color: #fff;
 }
 
@@ -516,10 +533,16 @@ h1 em {
   transition: all 0.2s;
 }
 
-.chat-send:active { transform: scale(0.95); }
+.chat-send:active {
+  background: #a04e13; /* Slightly darker orange */
+}
 .chat-send:hover:not(:disabled) {
-  background: #1a73e8;
+  background: #b55916;
   color: #fff;
+}
+.chat-dot {
+  color: #b55916;
+  font-weight: 700;
 }
 
 /* ── Mobile Menu Toggle ── */
@@ -542,6 +565,13 @@ h1 em {
   font-size: 32px;
   color: #1a1a1a;
   cursor: pointer;
+}
+.benefit-dot {
+  width: 6px;
+  height: 6px;
+  background: #b55916;
+  border-radius: 50%;
+  margin-top: 6px;
 }
 
 /* ── Responsive ── */
@@ -584,7 +614,7 @@ h1 em {
     padding: 14px;
   }
   .btn-nav:hover {
-    background: #1558c0 !important;
+    background: #a04e13 !important;
   }
   main {
     padding: 64px 20px 56px;
