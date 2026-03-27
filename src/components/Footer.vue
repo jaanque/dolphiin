@@ -1,15 +1,15 @@
 <template>
   <footer class="footer">
-    <div class="container">
-      <!-- Footer CTA Section with Dynamic Image Fade -->
-      <div class="footer-cta">
-        <div class="brand-overlay">
-          <a href="/" class="brand-link">
-            <h1 class="brand-title" aria-label="dolphiin">dolphiin</h1>
-          </a>
-        </div>
+    <!-- 100% Width Footer CTA Section (Full-Bleed) -->
+    <div class="footer-cta">
+      <div class="brand-overlay">
+        <a href="/" class="brand-link">
+          <h1 class="brand-title" aria-label="dolphiin">dolphiin</h1>
+        </a>
       </div>
+    </div>
 
+    <div class="container">
       <!-- Main Footer Content -->
       <div class="footer-grid">
         <div class="footer-col">
@@ -42,8 +42,8 @@ const bgImage = '/footer-bg.jpg'
 
 <style scoped>
 .footer {
-  padding: 120px 48px 60px;
-  background: #fff; /* Reverted to Brand White */
+  padding: 0 0 60px; /* Removed top/side padding for full-bleed CTA */
+  background: #fff;
   color: #1a1a1a;
   border-top: 1px solid #f2f2f2;
 }
@@ -53,17 +53,17 @@ const bgImage = '/footer-bg.jpg'
   margin: 0 auto;
 }
 
-/* ── CTA Section (Dynamic Fade) ── */
+/* ── CTA Section (Full-Bleed) ── */
 .footer-cta {
-  margin-bottom: 80px;
-  background: #fff; /* Reveal color */
-  border-radius: 16px; /* Subtle rounding as requested */
-  min-height: 500px;
+  width: 100%;
+  margin-bottom: 120px;
+  background: #fff;
+  min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Keep parallax mask contained */
 }
 
 
@@ -83,10 +83,13 @@ const bgImage = '/footer-bg.jpg'
 .brand-title {
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 1000;
-  font-size: clamp(100px, 18vw, 360px); /* Slightly smaller font size to accommodate massive stroke */
+  /* Responsive sizing that prevents overflow on small screens */
+  font-size: clamp(80px, 15vw, 360px); 
   margin: 0;
-  letter-spacing: 0; /* Tightened as requested */
-  line-height: 1;
+  letter-spacing: 0;
+  /* Increased line-height and padding to prevent 15px-stroke clipping */
+  line-height: 1.3;
+  padding: 40px 0;
   white-space: nowrap;
   
   /* Permanent Image Mask with Parallax */
@@ -98,8 +101,8 @@ const bgImage = '/footer-bg.jpg'
   background-clip: text;
   -webkit-text-fill-color: transparent;
   
-  /* Absolute CSS Maximum Thickness */
-  -webkit-text-stroke: 15px transparent;
+  /* Responsive Boldness: Scales the stroke with the viewport */
+  -webkit-text-stroke: clamp(4px, 1.2vw, 15px) transparent;
 }
 
 /* ── Grid Layout ── */
@@ -160,6 +163,13 @@ const bgImage = '/footer-bg.jpg'
   .footer-extra { 
     align-items: flex-start;
   }
-  .brand-title { font-size: 64px; }
+  .brand-title { 
+    /* High-impact mobile size that takes up most of the viewport width */
+    font-size: clamp(100px, 28vw, 140px);
+    letter-spacing: -0.05em; /* Tighter for mobile impact */
+    -webkit-text-stroke: 6px transparent;
+    line-height: 1.4;
+    padding: 20px 0;
+  }
 }
 </style>
