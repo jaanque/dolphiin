@@ -4,7 +4,7 @@
     <div class="footer-cta">
       <div class="brand-overlay">
         <a href="/" class="brand-link">
-          <h1 class="brand-title" aria-label="dolphiin">dolphiin</h1>
+          <h1 ref="brandTitle" class="brand-title" aria-label="dolphiin">dolphiin</h1>
         </a>
       </div>
     </div>
@@ -36,8 +36,29 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import LogoDolphin from './LogoDolphin.vue'
-const bgImage = '/footer-bg.jpg'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const brandTitle = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  if (brandTitle.value) {
+    gsap.to(brandTitle.value, {
+      backgroundPositionY: '100%', // Create a subtle movement or use a more complex sync
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.footer-cta',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    })
+  }
+})
 </script>
 
 <style scoped>
@@ -92,11 +113,11 @@ const bgImage = '/footer-bg.jpg'
   padding: 40px 0;
   white-space: nowrap;
   
-  /* Permanent Image Mask with Parallax */
+  /* Permanent Image Mask - Optimized with GSAP Parallax */
   background-image: url('/footer-bg.jpg');
   background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background-position: center 0%; /* Start at top */
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
